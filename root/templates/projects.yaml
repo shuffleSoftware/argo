@@ -8,7 +8,7 @@ spec:
     name: "in-cluster"
     namespace: argocd
   source:
-    path: apps/projects
+    path: projects
     repoURL: https://github.com/shuffleSoftware/argo.git
     targetRevision: HEAD       
     helm:

@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: podinfo
+  namespace: argocd
+spec:
+  # goTemplate: true
+  # goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: https://github.com/shuffleSoftware/argo.git
+      revision: main
+      files:
+        # first wildcard: name of application
+        # second wildcard: client
+        # third wildcard: actual deployment replica
+        # example: apps/app-name/client-1/env/deploy-replica
+        - path: apps/**/**/{{ .Values.environment }}/**/values.yaml
+  template:
+    metadata:
+      name: '{{ "{{path[1]}}-{{path[2]}}-{{path[3]}}-{{path[4]}}" }}'
+      labels:
+        app: '{{ "{{path[2]}}" }}'
+    spec:
+      project: '{{ "{{path[2]}}-{{path[3]}}" }}'
+      source:
+        repoURL: https://github.com/shuffleSoftware/argo.git
+        targetRevision: main
+        path: '{{ "{{path}}" }}'
+        helm:
+          parameters:
+          - name: "app"
+            value: '{{ "{{path[1]}}-{{path[4]}}" }}'
+          - name: "namespace"
+            value: '{{ "{{path[2]}}-{{path[3]}}" }}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ "{{path[2]}}-{{path[3]}}" }}'
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+        automated:
+          prune: true
+          selfHeal: true  

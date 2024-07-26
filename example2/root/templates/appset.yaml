@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: appset-app-appset
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/shuffleSoftware/argo.git
+      revision: main
+      files:
+        - path: example2/apps/**/**/{{ .Values.environment }}/**/values.yaml
+  template:
+    metadata:
+      name: '{{ "{{path[2]}}-{{path[3]}}-{{path[4]}}-{{path[5]}}" }}'
+      labels:
+        app: '{{ "{{path[3]}}" }}'
+    spec:
+      project: '{{ "{{path[3]}}-{{path[4]}}" }}'
+      source:
+        repoURL: https://github.com/shuffleSoftware/argo.git
+        targetRevision: main
+        path: '{{ "{{path}}" }}'
+        helm:
+          parameters:
+          - name: "app"
+            value: '{{ "{{path[2]}}-{{path[5]}}" }}'
+          - name: "namespace"
+            value: '{{ "{{path[3]}}-{{path[4]}}" }}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ "{{path[3]}}-{{path[4]}}" }}'
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+        automated:
+          prune: true
+          selfHeal: true  

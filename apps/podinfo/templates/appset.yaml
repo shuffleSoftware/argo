@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: jupyter
+  name: podinfo
   namespace: argocd
 spec:
   # goTemplate: true
@@ -14,14 +14,15 @@ spec:
         # first wildcard: name of application
         # second wildcard: client
         # third wildcard: actual deployment replica
-        - path: apps/appset/**/**/{{ .Values.environment }}/**/values.yaml
+        # example: apps/app-name/client-1/env/deploy-replica
+        - path: apps/**/**/{{ .Values.environment }}/**/values.yaml
   template:
     metadata:
-      name: '{{ "{{path[2]}}-{{path[3]}}-{{path[4]}}-{{path[5]}}" }}'
+      name: '{{ "{{path[1]}}-{{path[2]}}-{{path[3]}}-{{path[4]}}" }}'
       labels:
         app: '{{ "{{path[2]}}" }}'
     spec:
-      project: '{{ "{{path[3]}}-{{path[4]}}" }}'
+      project: '{{ "{{path[2]}}-{{path[3]}}" }}'
       source:
         repoURL: https://github.com/shuffleSoftware/argo.git
         targetRevision: main
@@ -29,12 +30,12 @@ spec:
         helm:
           parameters:
           - name: "app"
-            value: '{{ "{{path[2]}}-{{path[5]}}" }}'
+            value: '{{ "{{path[1]}}-{{path[4]}}" }}'
           - name: "namespace"
-            value: '{{ "{{path[3]}}-{{path[4]}}" }}'
+            value: '{{ "{{path[2]}}-{{path[3]}}" }}'
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{ "{{path[3]}}-{{path[4]}}" }}'
+        namespace: '{{ "{{path[2]}}-{{path[3]}}" }}'
       syncPolicy:
         syncOptions:
         - CreateNamespace=true

@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  destination:
+    name: "in-cluster"
+    namespace: argocd
+  source:
+    path: "apps/podinfo"
+    repoURL: https://github.com/shuffleSoftware/argo.git
+  project: default
+  syncPolicy:
+    syncOptions:
+        - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true

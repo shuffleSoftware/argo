@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: v1
+name: root-app
+description: one to rule them all
+type: application
+version: v1

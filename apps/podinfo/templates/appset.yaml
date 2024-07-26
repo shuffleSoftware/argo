@@ -8,7 +8,7 @@ spec:
   # goTemplateOptions: ["missingkey=error"]
   generators:
   - git:
-      repoURL: https://gitlab.telconet.ec/AI/safecity/safecity-2.0/aimp-test.git
+      repoURL: https://github.com/shuffleSoftware/argo.git
       revision: main
       files:
         # first wildcard: name of application
@@ -23,7 +23,7 @@ spec:
     spec:
       project: '{{ "{{path[3]}}-{{path[4]}}" }}'
       source:
-        repoURL: https://gitlab.telconet.ec/AI/safecity/safecity-2.0/aimp-test.git
+        repoURL: https://github.com/shuffleSoftware/argo.git
         targetRevision: main
         path: '{{ "{{path}}" }}'
         helm:

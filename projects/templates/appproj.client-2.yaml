@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:  
-  name: client-1-{{ .Values.environment }}
+  name: client-2-{{ .Values.environment }}
   namespace: argocd 
 spec:
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
   destinations:
-  - namespace: "client-1-{{ .Values.environment }}"
+  - namespace: "client-2-{{ .Values.environment }}"
     server: '*'
   sourceRepos:
   - '*' 
